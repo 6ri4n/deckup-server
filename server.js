@@ -1,23 +1,29 @@
 require("dotenv").config();
+
 const express = require("express");
-const server = express();
+const app = express();
 const connectDB = require("./utils/connectDB");
-const errorHandler = require("./utils/errorHandler");
+const statusCodeHandler = require("./utils/statusCodeHandler");
+const signupRoute = require("./routes/signup");
 
 connectDB(process.env.DB_URL);
 
-server.use((req, res, next) => {
+app.use(express.json());
+
+app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 
-server.all("*", (req, res) => {
+app.use("/signup", signupRoute);
+
+app.all("*", (req, res) => {
   res.status(404);
   throw new Error("Route not found");
 });
 
-server.use(errorHandler);
+app.use(statusCodeHandler);
 
-server.listen(process.env.PORT);
+app.listen(process.env.PORT);
