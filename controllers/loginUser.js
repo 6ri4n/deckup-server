@@ -44,7 +44,7 @@ const loginUser = asyncHandler(async (req, res) => {
       { expiresIn: expiresInAccessToken }
     );
 
-    res.status(200).json({ accessToken });
+    res.status(200).json({ userId: foundUser._id, accessToken });
   } else {
     res.status(401);
     throw new Error("Incorrect username or password.");
