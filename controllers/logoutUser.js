@@ -13,12 +13,13 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   if (foundUser) {
     await User.findOneAndUpdate({ _id: userId }, { refreshToken: "" });
+
     res
       .status(200)
       .json({ title: "Logout", message: "Successfully logged out." });
   } else {
-    res.status(401);
-    throw new Error("Incorrect username or password.");
+    res.status(500);
+    throw new Error(err.message);
   }
 });
 
