@@ -5,6 +5,7 @@ const app = express();
 const connectDB = require("./utils/connectDB");
 const statusCodeHandler = require("./utils/statusCodeHandler");
 const signupRoute = require("./routes/signup");
+const loginRoute = require("./routes/login");
 
 connectDB(process.env.DB_URL);
 
@@ -18,6 +19,8 @@ app.use((req, res, next) => {
 });
 
 app.use("/signup", signupRoute);
+
+app.use("/login", loginRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
