@@ -1,7 +1,7 @@
 const asyncHandler = require("../utils/asyncHandler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../database/models/user");
 
 const signupUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;

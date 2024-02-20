@@ -2,9 +2,9 @@ require("dotenv").config();
 
 const express = require("express");
 const app = express();
-const connectDB = require("./utils/connectDB");
-const statusCodeHandler = require("./utils/statusCodeHandler");
-const accountRoute = require("./routes/account");
+const connectDB = require("./src/database/connectDB");
+const statusCodeHandler = require("./src/utils/statusCodeHandler");
+const accountRoute = require("./src/routes/account");
 
 connectDB(process.env.DB_URL);
 
