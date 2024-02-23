@@ -21,7 +21,8 @@ const signupUser = asyncHandler(async (req, res) => {
       throw new Error("Username not available.");
     }
   } catch (err) {
-    res.status(500).json({ message: "Internal server error." });
+    res.status(500);
+    throw new Error(err.message);
   }
 
   try {
@@ -89,7 +90,8 @@ const loginUser = asyncHandler(async (req, res) => {
       throw new Error("Incorrect username or password.");
     }
   } catch (err) {
-    res.status(500).json({ message: "Internal server error." });
+    res.status(500);
+    throw new Error(err.message);
   }
 });
 
@@ -99,7 +101,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     const token = authHeader.split(" ")[1];
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
   } catch (err) {
-    return res.status(401).json({ message: "Unauthorized." });
+    res.status(500);
+    throw new Error(err.message);
   }
 
   res.clearCookie("refreshToken", { httpOnly: true });
