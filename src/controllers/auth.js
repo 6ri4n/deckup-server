@@ -1,21 +1,27 @@
-const asyncHandler = require("../utils/asyncHandler");
+require("dotenv").config();
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../database/models/user");
+const asyncHandler = require("../utils/asyncHandler");
 
 const signupUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
     res.status(400);
-    throw new Error("All fields are mandatory!");
+    throw new Error("All fields are mandatory.");
   }
 
-  const foundUsername = await User.findOne({ username });
+  try {
+    const foundUsername = await User.findOne({ username });
 
-  if (foundUsername) {
-    res.status(400);
-    throw new Error("Username not available.");
+    if (foundUsername) {
+      res.status(400);
+      throw new Error("Username not available.");
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error." });
   }
 
   try {
@@ -41,66 +47,64 @@ const loginUser = asyncHandler(async (req, res) => {
     throw new Error("All fields are mandatory!");
   }
 
-  const foundUser = await User.findOne({ username });
+  try {
+    const foundUser = await User.findOne({ username });
 
-  if (foundUser && (await bcrypt.compare(password, foundUser.password))) {
-    const expiresInRefreshToken =
-      process.env.NODE_ENV === "production" ? "1d" : "1m";
+    if (foundUser && (await bcrypt.compare(password, foundUser.password))) {
+      const expiresInRefreshToken =
+        process.env.NODE_ENV === "production" ? "2d" : "2m";
 
-    const refreshToken = jwt.sign(
-      {
-        user: {
-          username: foundUser.username,
-          id: foundUser._id,
+      const refreshToken = jwt.sign(
+        {
+          userId: foundUser._id,
         },
-      },
-      process.env.REFRESH_TOKEN,
-      { expiresIn: expiresInRefreshToken }
-    );
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: expiresInRefreshToken }
+      );
 
-    await User.findOneAndUpdate({ username }, { refreshToken });
+      const expiresInAccessToken =
+        process.env.NODE_ENV === "production" ? "15m" : "30s";
 
-    const expiresInAccessToken =
-      process.env.NODE_ENV === "production" ? "30m" : "15s";
-
-    const accessToken = jwt.sign(
-      {
-        user: {
-          username: foundUser.username,
-          id: foundUser._id,
+      const accessToken = jwt.sign(
+        {
+          user: {
+            username: foundUser.username,
+            id: foundUser._id,
+          },
         },
-      },
-      process.env.ACCESS_TOKEN,
-      { expiresIn: expiresInAccessToken }
-    );
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: expiresInAccessToken }
+      );
 
-    res.status(200).json({ userId: foundUser._id, accessToken });
-  } else {
-    res.status(401);
-    throw new Error("Incorrect username or password.");
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false, // Enable this in production when using HTTPS
+        signed: true,
+        sameSite: "strict",
+      });
+
+      res.status(200).json({ accessToken });
+    } else {
+      res.status(401);
+      throw new Error("Incorrect username or password.");
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Internal server error." });
   }
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  const { userId } = req.body;
-
-  if (!userId) {
-    res.status(400);
-    throw new Error("All fields are mandatory!");
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  } catch (err) {
+    return res.status(401).json({ message: "Unauthorized." });
   }
 
-  const foundUser = await User.findOne({ _id: userId });
+  res.clearCookie("refreshToken", { httpOnly: true });
 
-  if (foundUser) {
-    await User.findOneAndUpdate({ _id: userId }, { refreshToken: "" });
-
-    res
-      .status(200)
-      .json({ title: "Logout", message: "Successfully logged out." });
-  } else {
-    res.status(500);
-    throw new Error(err.message);
-  }
+  res.status(200).send("Logged out successfully.");
 });
 
 module.exports = { signupUser, loginUser, logoutUser };

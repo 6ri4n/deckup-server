@@ -10,9 +10,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please create a password"],
   },
-  refreshToken: {
-    type: String,
-  },
   decks: [
     {
       deckId: String,
@@ -22,6 +19,8 @@ const userSchema = new mongoose.Schema({
           cardId: String,
           term: String,
           definition: String,
+          termImageURL: String,
+          definitionImageURL: String,
         },
       ],
     },
