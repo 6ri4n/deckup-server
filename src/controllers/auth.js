@@ -96,17 +96,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-  try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader.split(" ")[1];
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  } catch (err) {
-    res.status(500);
-    throw new Error(err.message);
-  }
-
   res.clearCookie("refreshToken", { httpOnly: true });
-
   res.status(200).send("Logged out successfully.");
 });
 
