@@ -7,6 +7,7 @@ const connectDB = require("./src/database/connectDB");
 const statusCodeHandler = require("./src/utils/statusCodeHandler");
 const app = express();
 const accountRoute = require("./src/routes/account");
+const deckRoute = require("./src/routes/deck");
 
 connectDB(process.env.DB_URL);
 
@@ -23,6 +24,7 @@ app.use(helmet());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use("/account", accountRoute);
+app.use("/deck/:userId", deckRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
