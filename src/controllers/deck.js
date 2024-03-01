@@ -24,7 +24,23 @@ const createDeck = asyncHandler(async (req, res) => {
   }
 });
 
-const readDeck = asyncHandler(async (req, res) => {});
+const readDeck = asyncHandler(async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const foundUser = await User.findOne({ _id: userId });
+
+    if (!foundUser) {
+      res.status(404);
+      throw new Error("User not found.");
+    }
+
+    res.status(200).json({ decks: foundUser.decks });
+  } catch (err) {
+    res.status(500);
+    throw new Error(err.message);
+  }
+});
 
 const updateDeck = asyncHandler(async (req, res) => {});
 
