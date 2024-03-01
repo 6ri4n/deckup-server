@@ -12,11 +12,9 @@ const userSchema = new mongoose.Schema({
   },
   decks: [
     {
-      deckId: String,
       deckTitle: String,
       flashcards: [
         {
-          cardId: String,
           term: String,
           definition: String,
           frontImageURL: String,
