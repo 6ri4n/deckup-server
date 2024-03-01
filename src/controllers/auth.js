@@ -84,7 +84,11 @@ const loginUser = asyncHandler(async (req, res) => {
         sameSite: "strict",
       });
 
-      res.status(200).json({ accessToken });
+      res.status(200).json({
+        userId: foundUser._id,
+        username: foundUser.username,
+        accessToken,
+      });
     } else {
       res.status(401);
       throw new Error("Incorrect username or password.");
