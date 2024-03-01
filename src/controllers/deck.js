@@ -10,6 +10,11 @@ const createDeck = asyncHandler(async (req, res) => {
     throw new Error("All fields are mandatory!");
   }
 
+  if (newDeck.flashcards.length > 20) {
+    res.status(400);
+    throw new Error("Deck must not exceed 20 cards.");
+  }
+
   try {
     const foundUser = await User.findOne({ _id: userId });
 
@@ -53,9 +58,14 @@ const updateDeck = asyncHandler(async (req, res) => {
   const userId = req.params.userId;
   const { _id: deckId, deck: updatedDeck } = req.body;
 
-  if (!deckId || !updateDeck) {
+  if (!deckId || !updatedDeck) {
     res.status(400);
     throw new Error("All fields are mandatory!");
+  }
+
+  if (updatedDeck.flashcards.length > 20) {
+    res.status(400);
+    throw new Error("Deck must not exceed 20 cards.");
   }
 
   try {
