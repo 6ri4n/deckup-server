@@ -1,5 +1,3 @@
-require("dotenv").config();
-
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../database/models/user");
@@ -64,14 +62,12 @@ const loginUser = asyncHandler(async (req, res) => {
       );
 
       const expiresInAccessToken =
-        process.env.NODE_ENV === "production" ? "15m" : "30s";
+        process.env.NODE_ENV === "production" ? "15m" : "1m";
 
       const accessToken = jwt.sign(
         {
-          user: {
-            username: foundUser.username,
-            id: foundUser._id,
-          },
+          username: foundUser.username,
+          id: foundUser._id,
         },
         process.env.ACCESS_TOKEN_SECRET,
         { expiresIn: expiresInAccessToken }

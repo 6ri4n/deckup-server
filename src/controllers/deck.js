@@ -2,8 +2,10 @@ const User = require("../database/models/user");
 const asyncHandler = require("../utils/asyncHandler");
 
 const createDeck = asyncHandler(async (req, res) => {
-  const userId = req.params.userId;
-  const { deck: newDeck } = req.body;
+  const {
+    deck: newDeck,
+    user: { id: userId },
+  } = req.body;
 
   if (!newDeck) {
     res.status(400);
@@ -37,7 +39,9 @@ const createDeck = asyncHandler(async (req, res) => {
 });
 
 const readDeck = asyncHandler(async (req, res) => {
-  const userId = req.params.userId;
+  const {
+    user: { id: userId },
+  } = req.body;
 
   try {
     const foundUser = await User.findOne({ _id: userId });
@@ -55,8 +59,11 @@ const readDeck = asyncHandler(async (req, res) => {
 });
 
 const updateDeck = asyncHandler(async (req, res) => {
-  const userId = req.params.userId;
-  const { _id: deckId, deck: updatedDeck } = req.body;
+  const {
+    _id: deckId,
+    deck: updatedDeck,
+    user: { id: userId },
+  } = req.body;
 
   if (!deckId || !updatedDeck) {
     res.status(400);
@@ -97,8 +104,10 @@ const updateDeck = asyncHandler(async (req, res) => {
 });
 
 const deleteDeck = asyncHandler(async (req, res) => {
-  const userId = req.params.userId;
-  const { _id: deckId } = req.body;
+  const {
+    _id: deckId,
+    user: { id: userId },
+  } = req.body;
 
   if (!deckId) {
     res.status(400);
