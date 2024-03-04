@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   decks: [
     {
       deckTitle: String,
+      labels: [String],
       flashcards: [
         {
           term: String,
