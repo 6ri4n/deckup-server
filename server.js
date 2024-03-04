@@ -6,6 +6,7 @@ const helmet = require("helmet");
 const connectDB = require("./src/database/connectDB");
 const statusCodeHandler = require("./src/utils/statusCodeHandler");
 const app = express();
+const validateJWT = require("./src/middleware/validateJWT");
 const accountRoute = require("./src/routes/account");
 const deckRoute = require("./src/routes/deck");
 
@@ -24,7 +25,7 @@ app.use(helmet());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use("/account", accountRoute);
-app.use("/deck/:userId", deckRoute);
+app.use("/deck", validateJWT, deckRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
