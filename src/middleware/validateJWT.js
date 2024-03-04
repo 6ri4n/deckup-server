@@ -28,7 +28,7 @@ const validateJWT = (req, res, next) => {
       throw new Error("Unauthorized: Token has expired.");
     } else {
       res.status(500);
-      throw new Error("Internal Server Error.");
+      throw new Error(error.message);
     }
   }
 

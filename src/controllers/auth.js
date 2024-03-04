@@ -18,9 +18,9 @@ const signupUser = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error("Username not available.");
     }
-  } catch (err) {
+  } catch (error) {
     res.status(500);
-    throw new Error(err.message);
+    throw new Error(error.message);
   }
 
   try {
@@ -32,9 +32,9 @@ const signupUser = asyncHandler(async (req, res) => {
     });
 
     res.status(200).json({ message: "Successfully created an account." });
-  } catch (err) {
+  } catch (error) {
     res.status(500);
-    throw new Error(err.message);
+    throw new Error(error.message);
   }
 });
 
@@ -89,9 +89,9 @@ const loginUser = asyncHandler(async (req, res) => {
       res.status(401);
       throw new Error("Incorrect username or password.");
     }
-  } catch (err) {
+  } catch (error) {
     res.status(500);
-    throw new Error(err.message);
+    throw new Error(error.message);
   }
 });
 
@@ -128,7 +128,7 @@ const refreshUser = asyncHandler(async (req, res) => {
       throw new Error("Unauthorized: Token has expired.");
     } else {
       res.status(500);
-      throw new Error("Internal Server Error.");
+      throw new Error(err.message);
     }
   }
 
@@ -161,7 +161,7 @@ const refreshUser = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     res.status(500);
-    throw new Error("Internal Server Error.");
+    throw new Error(err.message);
   }
 });
 

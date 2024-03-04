@@ -3,6 +3,8 @@ const { statusCodeError } = require("./statusCodeConstants");
 const statusCodeHandler = (err, req, res, next) => {
   const statusCode = res.statusCode ? res.statusCode : 500;
 
+  console.error(`Status Code: ${statusCode}\n${err.message}`);
+
   switch (statusCode) {
     case statusCodeError.VALIDATION_ERROR:
       res.json({
@@ -35,7 +37,7 @@ const statusCodeHandler = (err, req, res, next) => {
       });
       break;
     default:
-      console.error(`Unhandled status code: ${statusCode}\n${err.message}`);
+      console.log("Unhandled Error.");
       break;
   }
 };

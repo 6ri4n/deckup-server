@@ -32,9 +32,9 @@ const createDeck = asyncHandler(async (req, res) => {
     );
 
     res.status(200).json({ message: "Successfully created a new deck." });
-  } catch (err) {
+  } catch (error) {
     res.status(500);
-    throw new Error(err.message);
+    throw new Error(error.message);
   }
 });
 
@@ -52,9 +52,9 @@ const readDeck = asyncHandler(async (req, res) => {
     }
 
     res.status(200).json({ decks: foundUser.decks });
-  } catch (err) {
+  } catch (error) {
     res.status(500);
-    throw new Error(err.message);
+    throw new Error(error.message);
   }
 });
 
@@ -97,9 +97,9 @@ const updateDeck = asyncHandler(async (req, res) => {
     );
 
     res.status(200).json({ message: "Successfully updated the deck." });
-  } catch (err) {
+  } catch (error) {
     res.status(500);
-    throw new Error(err.message);
+    throw new Error(error.message);
   }
 });
 
@@ -136,9 +136,9 @@ const deleteDeck = asyncHandler(async (req, res) => {
     );
 
     res.status(200).json({ message: "Successfully deleted the deck." });
-  } catch (err) {
+  } catch (error) {
     res.status(500);
-    throw new Error(err.message);
+    throw new Error(error.message);
   }
 });
 
