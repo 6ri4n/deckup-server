@@ -100,4 +100,69 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).send("Logged out successfully.");
 });
 
-module.exports = { signupUser, loginUser, logoutUser };
+const refreshUser = asyncHandler(async (req, res) => {
+  const cookies = req.signedCookies;
+
+  if (!cookies?.refreshToken) {
+    res.status(401);
+    throw new Error("Unauthorized.");
+  }
+
+  const refreshToken = cookies.refreshToken;
+  let payload;
+
+  try {
+    payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+
+    const now = Date.now() / 1000; // Convert to seconds
+    if (!payload.exp || payload.exp <= now) {
+      res.status(403);
+      throw new Error("Unauthorized: Token has expired.");
+    }
+  } catch (error) {
+    if (error.name === "JsonWebTokenError") {
+      res.status(403);
+      throw new Error("Unauthorized: Token is invalid.");
+    } else if (error.name === "TokenExpiredError") {
+      res.status(403);
+      throw new Error("Unauthorized: Token has expired.");
+    } else {
+      res.status(500);
+      throw new Error("Internal Server Error.");
+    }
+  }
+
+  try {
+    const foundUser = await User.findOne({ _id: payload.userId });
+
+    if (!foundUser) {
+      res.status(404);
+      throw new Error("User not found.");
+    }
+
+    const expiresInAccessToken =
+      process.env.NODE_ENV === "production" ? "15m" : "1m";
+
+    const accessToken = jwt.sign(
+      {
+        username: foundUser.username,
+        id: foundUser._id,
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: expiresInAccessToken,
+      }
+    );
+
+    res.status(200).json({
+      userId: foundUser._id,
+      username: foundUser.username,
+      accessToken,
+    });
+  } catch (error) {
+    res.status(500);
+    throw new Error("Internal Server Error.");
+  }
+});
+
+module.exports = { signupUser, loginUser, logoutUser, refreshUser };
