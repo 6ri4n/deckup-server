@@ -117,15 +117,15 @@ const refreshUser = asyncHandler(async (req, res) => {
     const now = Date.now() / 1000; // Convert to seconds
     if (!payload.exp || payload.exp <= now) {
       res.status(403);
-      throw new Error("Unauthorized: Token has expired.");
+      throw new Error("Unauthorized: Refresh token has expired.");
     }
   } catch (error) {
     if (error.name === "JsonWebTokenError") {
       res.status(403);
-      throw new Error("Unauthorized: Token is invalid.");
+      throw new Error("Unauthorized: Refresh token is invalid.");
     } else if (error.name === "TokenExpiredError") {
       res.status(403);
-      throw new Error("Unauthorized: Token has expired.");
+      throw new Error("Unauthorized: Refresh token has expired.");
     } else {
       res.status(500);
       throw new Error(err.message);

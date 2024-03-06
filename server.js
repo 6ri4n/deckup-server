@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express = require("express");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const connectDB = require("./src/database/connectDB");
@@ -12,8 +13,15 @@ const deckRoute = require("./src/routes/deck");
 
 connectDB(process.env.DB_URL);
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Content-Type, Authorization, Cookie"
