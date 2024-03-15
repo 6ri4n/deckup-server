@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../database/models/user");
 const asyncHandler = require("../utils/asyncHandler");
+const strongPassword = require("../utils/strongPassword");
 
 const signupUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
@@ -9,6 +10,18 @@ const signupUser = asyncHandler(async (req, res) => {
   if (!username || !password) {
     res.status(400);
     throw new Error("All fields are mandatory.");
+  } else {
+    if (username.length < 4) {
+      res.status(400);
+      throw new Error("Username must be greater than 3 characters.");
+    }
+
+    if (!strongPassword(password)) {
+      res.status(400);
+      throw new Error(
+        "Password must be greater than 5 characters. Password must have at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol from the following: !@#$%&."
+      );
+    }
   }
 
   try {
