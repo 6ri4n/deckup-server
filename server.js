@@ -35,8 +35,8 @@ app.use(express.json());
 app.use(helmet());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-app.use("/account", accountRoute);
-app.use("/deck", validateJWT, deckRoute);
+app.use("/api/account", accountRoute);
+app.use("/api/deck", validateJWT, deckRoute);
 
 app.all("*", (req, res) => {
   res.status(404);
