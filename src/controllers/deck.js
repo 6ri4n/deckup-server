@@ -12,9 +12,9 @@ const createDeck = asyncHandler(async (req, res) => {
     throw new Error("All fields are mandatory!");
   }
 
-  if (newDeck.flashcards.length > 20) {
+  if (newDeck.flashcards.length > 24) {
     res.status(400);
-    throw new Error("Deck must not exceed 20 cards.");
+    throw new Error("Deck must not exceed 24 cards.");
   }
 
   try {
@@ -78,9 +78,9 @@ const updateDeck = asyncHandler(async (req, res) => {
     throw new Error("All fields are mandatory!");
   }
 
-  if (updatedDeck.flashcards.length > 20) {
+  if (updatedDeck.flashcards.length > 24) {
     res.status(400);
-    throw new Error("Deck must not exceed 20 cards.");
+    throw new Error("Deck must not exceed 24 cards.");
   }
 
   try {
