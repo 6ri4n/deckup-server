@@ -41,8 +41,9 @@ const createDeck = asyncHandler(async (req, res) => {
 const readDeck = asyncHandler(async (req, res) => {
   const {
     user: { id: userId },
-    labels,
   } = req.body;
+
+  const { id } = req.query;
 
   try {
     const foundUser = await User.findOne({ _id: userId });
@@ -52,14 +53,33 @@ const readDeck = asyncHandler(async (req, res) => {
       throw new Error("User not found.");
     }
 
-    if (labels.length > 0) {
-      const filteredDeck = foundUser.decks.filter((deck) => {
-        return deck.labels.some((label) => labels.includes(label));
-      });
-      res.status(200).json({ decks: filteredDeck });
-    }
+    // if (labels.length > 0) {
+    //   const filteredDeck = foundUser.decks.filter((deck) => {
+    //     return deck.labels.some((label) => labels.includes(label));
+    //   });
+    //   res.status(200).json({ decks: filteredDeck });
+    // }
 
-    res.status(200).json({ decks: foundUser.decks });
+    if (id) {
+      const foundDeck = await User.findOne(
+        {
+          _id: userId,
+          "decks._id": id,
+        },
+        {
+          "decks.$": 1,
+        }
+      );
+
+      if (!foundDeck) {
+        res.status(404);
+        throw new Error("Deck not found.");
+      }
+
+      res.status(200).json({ deck: foundDeck });
+    } else {
+      res.status(200).json({ decks: foundUser.decks });
+    }
   } catch (error) {
     res.status(500);
     throw new Error(error.message);
@@ -113,11 +133,12 @@ const updateDeck = asyncHandler(async (req, res) => {
 
 const deleteDeck = asyncHandler(async (req, res) => {
   const {
-    _id: deckId,
     user: { id: userId },
   } = req.body;
 
-  if (!deckId) {
+  const { id } = req.query;
+
+  if (!id) {
     res.status(400);
     throw new Error("All fields are mandatory!");
   }
@@ -130,7 +151,7 @@ const deleteDeck = asyncHandler(async (req, res) => {
       throw new Error("User not found.");
     }
 
-    const foundDeck = await User.findOne({ _id: userId, "decks._id": deckId });
+    const foundDeck = await User.findOne({ _id: userId, "decks._id": id });
 
     if (!foundDeck) {
       res.status(404);
@@ -139,7 +160,7 @@ const deleteDeck = asyncHandler(async (req, res) => {
 
     await User.findOneAndUpdate(
       { _id: userId },
-      { $pull: { decks: { _id: deckId } } },
+      { $pull: { decks: { _id: id } } },
       { new: true }
     );
 
