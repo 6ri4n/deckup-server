@@ -43,7 +43,7 @@ const readDeck = asyncHandler(async (req, res) => {
     user: { id: userId },
   } = req.body;
 
-  const { id } = req.query;
+  const { id, category } = req.query;
 
   try {
     const foundUser = await User.findOne({ _id: userId });
@@ -52,13 +52,6 @@ const readDeck = asyncHandler(async (req, res) => {
       res.status(404);
       throw new Error("User not found.");
     }
-
-    // if (labels.length > 0) {
-    //   const filteredDeck = foundUser.decks.filter((deck) => {
-    //     return deck.labels.some((label) => labels.includes(label));
-    //   });
-    //   res.status(200).json({ decks: filteredDeck });
-    // }
 
     if (id) {
       const foundDeck = await User.findOne(
@@ -76,6 +69,11 @@ const readDeck = asyncHandler(async (req, res) => {
         throw new Error("Deck not found.");
       }
 
+      res.status(200).json({ deck: foundDeck });
+    } else if (category) {
+      const foundDeck = foundUser.decks.filter((deck) =>
+        deck.categories.includes(category)
+      );
       res.status(200).json({ deck: foundDeck });
     } else {
       res.status(200).json({ decks: foundUser.decks });

@@ -10,6 +10,7 @@ const app = express();
 const validateJWT = require("./src/middleware/validateJWT");
 const accountRoute = require("./src/routes/account");
 const deckRoute = require("./src/routes/deck");
+const categoryRoute = require("./src/routes/category");
 
 connectDB(process.env.DB_URL);
 
@@ -37,6 +38,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use("/api/account", accountRoute);
 app.use("/api/deck", validateJWT, deckRoute);
+app.use("/api/category", validateJWT, categoryRoute);
 
 app.all("*", (req, res) => {
   res.status(404);

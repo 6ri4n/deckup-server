@@ -13,15 +13,18 @@ const userSchema = new mongoose.Schema({
   decks: [
     {
       deckTitle: String,
-      labels: [String],
+      categories: [String],
       flashcards: [
         {
           term: String,
           definition: String,
-          frontImageURL: String,
-          backImageURL: String,
         },
       ],
+    },
+  ],
+  categories: [
+    {
+      categoryTitle: String,
     },
   ],
   createdAt: {
