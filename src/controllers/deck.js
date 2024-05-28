@@ -74,7 +74,7 @@ const readDeck = asyncHandler(async (req, res) => {
       const foundDeck = foundUser.decks.filter((deck) =>
         deck.categories.includes(category)
       );
-      res.status(200).json({ deck: foundDeck });
+      res.status(200).json({ decks: foundDeck });
     } else {
       res.status(200).json({ decks: foundUser.decks });
     }
